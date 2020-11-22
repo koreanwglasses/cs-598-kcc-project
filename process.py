@@ -11,6 +11,7 @@ import warnings
 warnings.filterwarnings("ignore", message=".*looks like a URL.*", module='bs4')
 
 nltk.download('averaged_perceptron_tagger')
+nlyk.download('punkt')
 
 # dep_parser = CoreNLPDependencyParser(url='http://localhost:9000')
 # parses = dep_parser.parse('What is the airspeed of an unladen swallow ?'.split())
