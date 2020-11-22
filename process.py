@@ -87,10 +87,11 @@ PRETERMINALS = [
 ]
 
 HEADER_OUT = [
+    'TEXT',
     'CT1',
     'CT2',
     *['CT3.' + tag for tag in POS_TAGS],
-    *['CT4.' + preterm for preterm in PRETERMINALS],
+#    *['CT4.' + preterm for preterm in PRETERMINALS],
     'CN1',
     'CN2',
     'U1.SUM',
@@ -122,6 +123,7 @@ def process_datum(datum):
     # preterm_counts =
 
     result = {}
+    result['TEXT'] = body_text
     result['CT1'] = lexicon_count(body_text)
     result['CT2'] = sentence_count(body_text)
     for tag in POS_TAGS:
