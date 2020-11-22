@@ -12,11 +12,11 @@ warnings.filterwarnings("ignore", message=".*looks like a URL.*", module='bs4')
 
 nltk.download('averaged_perceptron_tagger')
 
-dep_parser = CoreNLPDependencyParser(url='http://localhost:9000')
-parses = dep_parser.parse('What is the airspeed of an unladen swallow ?'.split())
-print([[dep for _, dep, _ in parse.triples()] for parse in parses])
-
-exit(0)
+# dep_parser = CoreNLPDependencyParser(url='http://localhost:9000')
+# parses = dep_parser.parse('What is the airspeed of an unladen swallow ?'.split())
+# print([[dep for _, dep, _ in parse.triples()] for parse in parses])
+# 
+# exit(0)
 
 POS_TAGS = [
     "CC",
