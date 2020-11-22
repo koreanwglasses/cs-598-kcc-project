@@ -1,8 +1,8 @@
-#!/bin/bash
+#/bin/bash
 
 DIR=`pwd`
 
-CORENLP_DIR=~/.nlp/stanford-corenlp
+CORENLP_DIR=~/.tmp-dep/stanford-corenlp
 if [ ! -d $CORENLP_DIR ]
   then
     mkdir -p $CORENLP_DIR
