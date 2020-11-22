@@ -17,12 +17,14 @@ if [ ! -f ./stanford-corenlp-latest.zip ]
     wget http://nlp.stanford.edu/software/stanford-corenlp-latest.zip
 fi
 
-if [ ! -d ./stanford-corenlp-latest ]
+CORENLP_LATEST=stanford-corenlp-*/
+
+if [ ! -d $CORENLP_LATEST ]
   then
     unzip ./stanford-corenlp-latest.zip
 fi
 
-cd stanford-corenlp-latest
+cd $CORENLP_LATEST
 
 java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer \
 -preload tokenize,ssplit,pos,lemma,ner,parse,depparse \
