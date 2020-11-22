@@ -149,7 +149,7 @@ def process_datum(datum):
 
 
 
-with open("se-1.csv", "w") as out_file:
+with open("se-data.csv", "w") as out_file:
     writer = csv.writer(out_file)
     writer.writerow(HEADER_OUT)
 
@@ -191,7 +191,7 @@ with open("se-1.csv", "w") as out_file:
 
                 row_num += 1
 
-        if !running:
+        if not running:
             break
 
 print(f"\rComplete! Processed {processed_rows_count} rows")
