@@ -1,6 +1,7 @@
 #/bin/bash
 
 set -e
+trap 'kill $(jobs -p)' EXIT
 
 DIR=`pwd`
 
@@ -32,3 +33,4 @@ java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer \
 
 cd $DIR
 python3 process.py
+
