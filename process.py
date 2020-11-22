@@ -148,10 +148,12 @@ def process_datum(datum):
     return result
 
 
+
 with open("se-1.csv", "w") as out_file:
     writer = csv.writer(out_file)
     writer.writerow(HEADER_OUT)
 
+    running = True
     processed_rows_count = 0
     for filename in glob("data/*.csv"):
 
@@ -170,13 +172,18 @@ with open("se-1.csv", "w") as out_file:
 
                 try:
                     result = process_datum(datum)
+
+                    new_row = [result[key]
+                               if key in result else None for key in HEADER_OUT]
+
+                    writer.writerow(new_row)
+                except KeyboardInterrupt:
+                    print(f"Processing stopped. Closing...")
+                    running = False
+                    break
                 except:
                     print(f"Skipping row {row_num} of {filename} due to an error")
 
-                new_row = [result[key]
-                           if key in result else None for key in HEADER_OUT]
-
-                writer.writerow(new_row)
 
                 processed_rows_count += 1
                 if processed_rows_count % 100 == 0:
@@ -184,5 +191,7 @@ with open("se-1.csv", "w") as out_file:
 
                 row_num += 1
 
+        if !running:
+            break
 
 print(f"\rComplete! Processed {processed_rows_count} rows")
