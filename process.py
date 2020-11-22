@@ -157,16 +157,21 @@ with open("se-1.csv", "w") as out_file:
 
         with open(filename) as in_file:
             header_row = None
+            row_num = 1
             for row in csv.reader(in_file):
                 if not header_row:
                     header_row = row
                     continue
 
+
                 datum = {}
                 for key, value in zip(header_row, row):
                     datum[key] = value
 
-                result = process_datum(datum)
+                try:
+                    result = process_datum(datum)
+                except:
+                    print(f"Skipping row {row_num} of {filename} due to an error")
 
                 new_row = [result[key]
                            if key in result else None for key in HEADER_OUT]
@@ -176,6 +181,8 @@ with open("se-1.csv", "w") as out_file:
                 processed_rows_count += 1
                 if processed_rows_count % 100 == 0:
                     print(f"\rProcessed {processed_rows_count} rows", end="")
+
+                row_num += 1
 
 
 print(f"\rComplete! Processed {processed_rows_count} rows")
