@@ -9,8 +9,6 @@ import nltk
 from collections import Counter
 import warnings
 warnings.filterwarnings("ignore", message=".*looks like a URL.*", module='bs4')
-import sys
-import os
 
 nltk.download('averaged_perceptron_tagger')
 nltk.download('punkt')
@@ -150,48 +148,50 @@ def process_datum(datum):
     return result
 
 
-filename = sys.argv[1]
-out_filename = os.path.join("out",os.path.basename(filename)) 
 
-with open(out_filename, "w") as out_file,\
-     open(filename) as in_file:
-
+with open("se-data.csv", "w") as out_file:
     writer = csv.writer(out_file)
     writer.writerow(HEADER_OUT)
 
+    running = True
     processed_rows_count = 0
+    for filename in glob("data/*.csv"):
 
-    header_row = None
-    row_num = 1
-    for row in csv.reader(in_file):
-        if not header_row:
-            header_row = row
-            continue
+        with open(filename) as in_file:
+            header_row = None
+            row_num = 1
+            for row in csv.reader(in_file):
+                if not header_row:
+                    header_row = row
+                    continue
 
 
-        datum = {}
-        for key, value in zip(header_row, row):
-            datum[key] = value
+                datum = {}
+                for key, value in zip(header_row, row):
+                    datum[key] = value
 
-        try:
-            result = process_datum(datum)
+                try:
+                    result = process_datum(datum)
 
-            new_row = [result[key]
-                       if key in result else None for key in HEADER_OUT]
+                    new_row = [result[key]
+                               if key in result else None for key in HEADER_OUT]
 
-            writer.writerow(new_row)
-        except KeyboardInterrupt:
-            print(f"Processing stopped. Closing...")
+                    writer.writerow(new_row)
+                except KeyboardInterrupt:
+                    print(f"Processing stopped. Closing...")
+                    running = False
+                    break
+                except:
+                    print(f"Skipping row {row_num} of {filename} due to an error")
+
+
+                processed_rows_count += 1
+                if processed_rows_count % 100 == 0:
+                    print(f"\rProcessed {processed_rows_count} rows", end="")
+
+                row_num += 1
+
+        if not running:
             break
-        except:
-            print(f"Skipping row {row_num} of {filename} due to an error")
 
-
-        processed_rows_count += 1
-        if processed_rows_count % 10000 == 0:
-            print(f"Processed {processed_rows_count} rows in {filename}")
-
-        row_num += 1
-
-
-print(f"\rComplete! Processed {processed_rows_count} rows in {filename}")
+print(f"\rComplete! Processed {processed_rows_count} rows")
