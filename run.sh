@@ -1,36 +1,30 @@
 #/bin/bash
-
 set -e
-trap 'kill $(jobs -p)' EXIT
 
-DIR=`pwd`
+remote_url=`git config --get remote.origin.url`
+read -p "Git Username: " username
+read -sp "Password: " password
+auth_remote_url=${remote_url/:\/\//:\/\/$username:$password@}
 
-CORENLP_DIR=~/.tmp-dep/stanford-corenlp
-if [ ! -d $CORENLP_DIR ]
-  then
-    mkdir -p $CORENLP_DIR
-fi
+git fetch $auth_remote_url
 
-cd $CORENLP_DIR
+function stagger() {
+	i=0
+	for inFile in data/*.csv; do
+		if [ $(( $i % $1 )) == $2 ]; then
+			python3 process.py $inFile
+			base=$(basename -- "$inFile")
+			git add out/$base
+			git commit -m "processed $inFile"
+			git push $auth_remote_url
+			rm out/$base
+	        fi
+		let i=i+1
+	done
+}
 
-if [ ! -f ./stanford-corenlp-latest.zip ]
-  then
-    wget http://nlp.stanford.edu/software/stanford-corenlp-latest.zip
-fi
+trap 'kill $(jobs -p)' SIGINT
 
-CORENLP_LATEST=stanford-corenlp-*/
-
-if [ ! -d $CORENLP_LATEST ]
-  then
-    unzip ./stanford-corenlp-latest.zip
-fi
-
-cd $CORENLP_LATEST
-
-java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer \
--preload tokenize,ssplit,pos,lemma,ner,parse,depparse \
--status_port 9000 -port 9000 -timeout 15000 & 
-
-cd $DIR
-python3 process.py
-
+stagger 2 0 &
+stagger 2 1 &
+wait < <(jobs -p)
